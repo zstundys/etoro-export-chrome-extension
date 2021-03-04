@@ -1,0 +1,42 @@
+{
+  "name": "etoro-export-chrome-extension",
+  "version": "0.0.1",
+  "description": "An extension that provides a capability to export portfolio data from eToro trading platform",
+  "main": "background.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zstundys/etoro-export-chrome-extension.git"
+  },
+  "keywords": [
+    "etoro",
+    "chrome",
+    "extension",
+    "export",
+    "csv",
+    "data",
+    "portfolio"
+  ],
+  "author": "Žanas Stundys",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zstundys/etoro-export-chrome-extension/issues"
+  },
+  "homepage": "https://github.com/zstundys/etoro-export-chrome-extension#readme",
+  "devDependencies": {
+    "@types/chrome": "^0.0.133",
+    "prettier": "^2.2.1"
+  },
+  "prettier": {
+    "arrowParens": "avoid",
+    "printWidth": 80,
+    "bracketSpacing": true,
+    "semi": true,
+    "singleQuote": false,
+    "useTabs": false,
+    "trailingComma": "es5",
+    "tabWidth": 2
+  }
+}
