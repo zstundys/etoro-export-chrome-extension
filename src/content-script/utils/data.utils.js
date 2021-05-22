@@ -1,7 +1,7 @@
 const cryptoMap = {
-  BTC: "BTCUSDT",
-  ETHEREUM: "ETHUSDT",
-  ADA: "ADA",
+  BTC: "BTC-USD",
+  ETHEREUM: "ETH-USD",
+  ADA: "ADA-USD",
 };
 
 const stockMap = {

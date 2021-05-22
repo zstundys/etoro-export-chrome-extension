@@ -18,9 +18,10 @@ chrome.runtime.onMessage.addListener((message) => {
     "export-crypto": () => {
       const [dataset, fileName] = PageUtils.getDatasetAndFileNameForPage();
       const exported = DataUtils.keepOnlyCryptoRows(dataset, 0);
+      const mapped = DataUtils.mapCryptoSymbolsRows(exported, 0);
 
-      console.log(message.action, exported);
-      FileUtils.downloadMatrixAsCsv(exported, fileName);
+      console.log(message.action, mapped);
+      FileUtils.downloadMatrixAsCsv(mapped, fileName);
     },
   };
 
