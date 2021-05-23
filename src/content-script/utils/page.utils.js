@@ -5,29 +5,66 @@ class PageUtils {
         '[data-etoro-automation-id="portfolio-manual-trades-table-body-market-name"]',
       SHARES:
         '[data-etoro-automation-id="portfolio-overview-table-body-cell-units-value"]',
-      PRICE:
+      INVESTED:
+        '[data-etoro-automation-id="portfolio-manual-trades-table-body-invested-value"]',
+      price:
         '[data-etoro-automation-id="portfolio-manual-trades-table-body-open-rate"]',
 
-      invested:
-        '[data-etoro-automation-id="portfolio-manual-trades-table-body-invested-value"]',
       root: '[data-etoro-automation-id="portfolio-manual-trades-table"]',
     };
 
     const rowData = PageUtils.getRowElements(dom.root)
       .map((rowElement) => [
         PageUtils.getContentForChild(rowElement, dom.SYMBOL),
-        PageUtils.getContentForChild(rowElement, dom.PRICE),
-        PageUtils.getContentForChild(rowElement, dom.invested),
+        PageUtils.getContentForChild(rowElement, dom.price),
+        PageUtils.getContentForChild(rowElement, dom.INVESTED),
       ])
       .map(([symbol, price, invested]) => {
         const shares = (invested / price).toFixed(4);
-        return [symbol, shares, price];
+        return [symbol, parseFloat(shares), parseFloat(invested)];
       });
 
-    DataUtils.sortMatrixByColumn(rowData, 0);
-    const columns = Object.keys(dom).slice(0, rowData[0].length);
+    const exportedData = confirm(
+      "Would you like to aggregate the data by symbol?"
+    )
+      ? PageUtils.aggregateData(rowData)
+      : rowData;
 
-    return [columns, ...rowData];
+    DataUtils.sortMatrixByColumn(exportedData, 0);
+    const columns = Object.keys(dom).slice(0, exportedData[0].length);
+
+    return [columns, ...exportedData];
+  }
+
+  static aggregateData(duplicateData) {
+    const summedRowData = duplicateData.reduce(
+      (acc, [symbol, shares, invested]) => {
+        if (symbol in acc) {
+          const [, accShares, accInvested] = acc[symbol];
+
+          return {
+            ...acc,
+            [symbol]: [symbol, accShares + shares, accInvested + invested],
+          };
+        } else {
+          return {
+            ...acc,
+            [symbol]: [symbol, shares, invested],
+          };
+        }
+      },
+      {}
+    );
+
+    const finalRowData = Object.values(
+      summedRowData
+    ).map(([symbol, shares, price]) => [
+      symbol,
+      shares.toFixed(4),
+      price.toFixed(2),
+    ]);
+
+    return finalRowData;
   }
 
   static getTableForPortfolioPage() {
