@@ -77,6 +77,8 @@ class PageUtils {
         '[data-etoro-automation-id="portfolio-overview-table-body-cell-total-amount"]',
       MARKET_VALUE:
         '[data-etoro-automation-id="portfolio-overview-table-body-cell-equity"]',
+      AVERAGE_PRICE:
+        '[data-etoro-automation-id="portfolio-overview-table-body-cell-avg-open-rate"]',
 
       root: '[data-etoro-automation-id="portfolio-overview-table-body"]',
     };
@@ -86,6 +88,7 @@ class PageUtils {
       PageUtils.getContentForChild(el, dom.SHARES),
       PageUtils.getContentForChild(el, dom.INVESTED),
       PageUtils.getContentForChild(el, dom.MARKET_VALUE),
+      PageUtils.getContentForChild(el, dom.AVERAGE_PRICE),
     ]);
 
     DataUtils.sortMatrixByColumn(rowData, 0);
