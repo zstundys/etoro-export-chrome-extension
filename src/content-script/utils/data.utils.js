@@ -1,5 +1,6 @@
 const cryptoMap = {
   BTC: "BTCUSDT",
+  ETH: "ETHUSDT",
   ETHEREUM: "ETHUSDT",
   ADA: "ADAUSDT",
 };
