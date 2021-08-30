@@ -9,12 +9,12 @@ body {
 }
 
 main {
-  display: flex;
-  background: white;
-  box-shadow: 0 1px 4px -1px rgba(0, 0, 0, 0.24);
-  border-radius: var(--border-radius);
+  display: grid;
+  grid-template-columns: min-content min-content min-content;
+  grid-template-rows: min-content min-content;
+  grid-gap: 8px;
+
   padding: 2px;
-  min-width: 240px;
 }
 
 * {
@@ -22,7 +22,6 @@ main {
 }
 
 button {
-  background: white;
   white-space: nowrap;
   border: none;
   padding: 0.5rem 1rem;
@@ -33,6 +32,9 @@ button {
   text-align: left;
   outline: none;
   font-size: inherit;
+  background: white;
+  box-shadow: 0 1px 4px -1px rgba(0, 0, 0, 0.24);
+  border-radius: var(--border-radius);
 }
 
 button span + span {
@@ -49,14 +51,4 @@ button:focus {
 
 button:active {
   filter: brightness(80%);
-}
-
-button:first-of-type {
-  border-top-left-radius: var(--border-radius);
-  border-bottom-left-radius: var(--border-radius);
-}
-
-button:last-of-type {
-  border-top-right-radius: var(--border-radius);
-  border-bottom-right-radius: var(--border-radius);
 }

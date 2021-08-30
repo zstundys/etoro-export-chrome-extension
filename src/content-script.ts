@@ -1,10 +1,12 @@
 import { DataUtils } from "./utils/data.utils";
 import { PageUtils } from "./utils/page.utils";
 import { FileUtils } from "./utils/file.utils";
+import { SheetUtils } from "./utils/sheet.utils";
 
 enum ExportAction {
   ExportAll = "export-all",
   ExportStocks = "export-stocks",
+  SyncStocks = "sync-stocks",
   ExportCrypto = "export-crypto",
 }
 
@@ -28,6 +30,14 @@ chrome.runtime.onMessage.addListener((message: ExportMessage) => {
 
       console.log(message.action, exported);
       FileUtils.downloadMatrixAsCsv(exported, `${fileName}-stocks`);
+    },
+    [ExportAction.SyncStocks]: () => {
+      const [dataset] = PageUtils.getDatasetAndFileNameForPage();
+      const stocksDataset = DataUtils.excludeCryptoRows(dataset, 0);
+      const exported = DataUtils.mapStockSymbolsRows(stocksDataset, 0);
+
+      console.log(message.action, exported);
+      SheetUtils.syncHoldings(exported);
     },
     [ExportAction.ExportCrypto]: () => {
       const [dataset, fileName] = PageUtils.getDatasetAndFileNameForPage();

@@ -1,3 +1,5 @@
+import { ExportedHoldingCsvData } from "../types";
+
 const cryptoMap = new Map<string, string>();
 
 cryptoMap.set("BTC", "BTCUSDT");
@@ -12,17 +14,20 @@ stockMap.set("DASH.US", "DASH");
 export class DataUtils {
   /** Filters crypto rows out from given dataset */
   static excludeCryptoRows(
-    matrix: string[][],
+    matrix: ExportedHoldingCsvData,
     symbolIndex: number
-  ): string[][] {
-    return matrix.filter((row) => !cryptoMap.has(row[symbolIndex]));
+  ): ExportedHoldingCsvData {
+    const [columns, ...rows] = matrix;
+    const stockRows = rows.filter((row) => !cryptoMap.has(row[symbolIndex]));
+
+    return [columns, ...stockRows];
   }
 
   /** Keeps only crypto rows from given dataset */
   static keepOnlyCryptoRows(
-    matrix: string[][],
+    matrix: ExportedHoldingCsvData,
     symbolIndex: number
-  ): string[][] {
+  ): ExportedHoldingCsvData {
     const [columns, ...rows] = matrix;
 
     const cryptoRows = rows.filter((row) => cryptoMap.has(row[symbolIndex]));
@@ -49,9 +54,9 @@ export class DataUtils {
 
   /** Maps stock symbols to Qualtrimm supported format */
   static mapStockSymbolsRows(
-    matrix: string[][],
+    matrix: ExportedHoldingCsvData,
     symbolIndex: number
-  ): string[][] {
+  ): ExportedHoldingCsvData {
     const [columns, ...rows] = matrix;
     const mappedRows = rows.map((row) => {
       const rawSymbol = row[symbolIndex];

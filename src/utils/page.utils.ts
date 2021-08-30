@@ -1,8 +1,5 @@
+import { ExportedHoldingCsvData, RowData, TradeTuple } from "../types";
 import { DataUtils } from "./data.utils";
-
-type TradeTuple = [symbol: string, shares: number, invested: number];
-type RowData = string[];
-type ExportedHoldingCsvData = [columns: string[], ...rowData: RowData[]];
 
 export class PageUtils {
   static getTableForTradesPage(): ExportedHoldingCsvData {
