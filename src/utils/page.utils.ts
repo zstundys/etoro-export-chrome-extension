@@ -1,5 +1,11 @@
-class PageUtils {
-  static getTableForTradesPage() {
+import { DataUtils } from "./data.utils";
+
+type TradeTuple = [symbol: string, shares: number, invested: number];
+type RowData = string[];
+type ExportedHoldingCsvData = [columns: string[], ...rowData: RowData[]];
+
+export class PageUtils {
+  static getTableForTradesPage(): ExportedHoldingCsvData {
     const dom = {
       SYMBOL:
         '[data-etoro-automation-id="portfolio-manual-trades-table-body-market-name"]',
@@ -11,24 +17,24 @@ class PageUtils {
         '[data-etoro-automation-id="portfolio-manual-trades-table-body-open-rate"]',
 
       root: '[data-etoro-automation-id="portfolio-manual-trades-table"]',
-    };
+    } as const;
 
-    const rowData = PageUtils.getRowElements(dom.root)
+    const rowData: TradeTuple[] = PageUtils.getRowElements(dom.root)
       .map((rowElement) => [
         PageUtils.getContentForChild(rowElement, dom.SYMBOL),
         PageUtils.getContentForChild(rowElement, dom.price),
         PageUtils.getContentForChild(rowElement, dom.INVESTED),
       ])
       .map(([symbol, price, invested]) => {
-        const shares = (invested / price).toFixed(4);
+        const shares = (parseFloat(invested) / parseFloat(price)).toFixed(4);
         return [symbol, parseFloat(shares), parseFloat(invested)];
       });
 
     const exportedData = confirm(
       "Would you like to aggregate the data by symbol?"
     )
-      ? PageUtils.aggregateData(rowData)
-      : rowData;
+      ? this.formatRowData(this.aggregateData(rowData))
+      : this.formatRowData(rowData);
 
     DataUtils.sortMatrixByColumn(exportedData, 0);
     const columns = Object.keys(dom).slice(0, exportedData[0].length);
@@ -36,8 +42,12 @@ class PageUtils {
     return [columns, ...exportedData];
   }
 
-  static aggregateData(duplicateData) {
-    const summedRowData = duplicateData.reduce(
+  static aggregateData(duplicateData: TradeTuple[]): TradeTuple[] {
+    type HoldingsMap = {
+      [symbol: string]: TradeTuple;
+    };
+
+    const summedRowData = duplicateData.reduce<HoldingsMap>(
       (acc, [symbol, shares, invested]) => {
         if (symbol in acc) {
           const [, accShares, accInvested] = acc[symbol];
@@ -56,18 +66,10 @@ class PageUtils {
       {}
     );
 
-    const finalRowData = Object.values(
-      summedRowData
-    ).map(([symbol, shares, price]) => [
-      symbol,
-      shares.toFixed(4),
-      price.toFixed(2),
-    ]);
-
-    return finalRowData;
+    return Object.values(summedRowData);
   }
 
-  static getTableForPortfolioPage() {
+  static getTableForPortfolioPage(): ExportedHoldingCsvData {
     const dom = {
       SYMBOL:
         '[data-etoro-automation-id="portfolio-overview-table-body-cell-market-name"]',
@@ -97,18 +99,17 @@ class PageUtils {
     return [columns, ...rowData];
   }
 
-  static checkPage() {
+  static checkPage(): { isPortfolio: boolean; isTrades: boolean } {
     const isPortfolio = window.location.pathname.endsWith("portfolio");
     const isTrades = window.location.pathname.endsWith("manual-trades");
 
     return { isPortfolio, isTrades };
   }
 
-  /**
-   *
-   * @returns {[any[][], string]}
-   */
-  static getDatasetAndFileNameForPage() {
+  static getDatasetAndFileNameForPage(): [
+    dataset: ExportedHoldingCsvData,
+    fileName: string
+  ] {
     const { isPortfolio, isTrades } = PageUtils.checkPage();
 
     if (isPortfolio) {
@@ -118,26 +119,34 @@ class PageUtils {
       return [PageUtils.getTableForTradesPage(), "trades"];
     }
 
-    return [[], ""];
+    return [[[]], ""];
   }
 
-  static getContentForChild(parent, childSelector) {
-    return parent
-      .querySelector(childSelector)
-      ?.textContent.trim()
-      .replace(/\$|,/gi, "");
+  static getContentForChild(
+    parent: HTMLElement,
+    childSelector: string
+  ): string {
+    const childElementText =
+      parent.querySelector(childSelector)?.textContent ?? "";
+    const cleanText = childElementText.trim().replace(/\$|,/gi, "");
+
+    return cleanText;
   }
 
-  /**
-   * Returns an array of row elements for given table
-   * @param {string} tableSelector
-   * @returns {HTMLElement[]}
-   */
-  static getRowElements(tableSelector) {
+  /** Returns an array of row elements for given table */
+  static getRowElements(tableSelector: string): HTMLElement[] {
     return Array.from(
       document
         .querySelector(tableSelector)
-        .querySelectorAll(".ui-table-row-container")
+        ?.querySelectorAll(".ui-table-row-container") ?? []
     );
+  }
+
+  static formatRowData(rawRowData: TradeTuple[]): RowData[] {
+    return rawRowData.map(([symbol, shares, price]) => [
+      symbol,
+      shares.toFixed(4),
+      price.toFixed(2),
+    ]);
   }
 }

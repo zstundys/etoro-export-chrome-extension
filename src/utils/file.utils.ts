@@ -1,9 +1,6 @@
-class FileUtils {
-  /**
-   * Adds a date-time suffix to given string
-   * @param {string} word
-   */
-  static addSuffix(word) {
+export class FileUtils {
+  /** Adds a date-time suffix to given string */
+  static addSuffix(word: string): string {
     const dateSuffix = new Date()
       .toISOString()
       .substr(0, 19)
@@ -11,12 +8,8 @@ class FileUtils {
     return `${word}_${dateSuffix}`;
   }
 
-  /**
-   * Downloads given matrix to a file
-   * @param {string[][]} matrix
-   * @param {string} fileName
-   */
-  static downloadMatrixAsCsv(matrix, fileName) {
+  /** Downloads given matrix to a file */
+  static downloadMatrixAsCsv(matrix: string[][], fileName: string): void {
     const csvString = matrix.map((e) => e.join(",")).join("\n");
 
     const link = document.createElement("a");
