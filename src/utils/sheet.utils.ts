@@ -7,10 +7,15 @@ export class SheetUtils {
   private static readonly document = new GoogleSpreadsheet(
     secrets.holdings_sheet_id
   );
+
+  // Holdings sheet
   private static readonly holdingsSheetTitle = "Holdings";
   private static readonly holdingsRange = "A8:Q108";
   private static readonly holdingsRangeHeight = 100;
   private static readonly holdingsRangeRow = 8;
+  // Allocation sheet
+  private static readonly allocationSheetTitle = "Allocation";
+  private static readonly availableToSpendCell = "B1";
   // Secrets
   private static readonly clientEmail = secrets.client_email;
   private static readonly privateKey = secrets.private_key;
@@ -31,8 +36,8 @@ export class SheetUtils {
 
       const rowCells = this.getHoldings(r);
       rowCells.A.value = symbol;
-      rowCells.B.value = shares;
-      rowCells.C.value = invested;
+      rowCells.B.value = parseFloat(shares);
+      rowCells.C.value = parseFloat(invested);
       rowCells.D.formula = `=GOOGLEFINANCE(A${r}, "price")*B${r}`;
       rowCells.E.formula = `=D${r}-C${r}`;
       rowCells.F.formula = `=D${r}/C${r} - 1`;
@@ -51,7 +56,24 @@ export class SheetUtils {
 
     await sheet.saveUpdatedCells();
 
-    console.log("Done");
+    console.log("Syncing holdings to Google Sheets... Done");
+  }
+
+  static async syncAvailableToSpend(availableToSpend: number) {
+    console.log(`Updating available to spend cell (${availableToSpend}$)...`);
+
+    await this.initialize();
+    const sheet = this.getAllocationSheet();
+    await sheet.loadCells(this.availableToSpendCell);
+
+    const cell = sheet.getCellByA1(this.availableToSpendCell);
+    cell.value = availableToSpend;
+
+    await sheet.saveUpdatedCells();
+
+    console.log(
+      `Updating available to spend cell (${availableToSpend}$)... Done `
+    );
   }
 
   private static async initialize() {
@@ -65,6 +87,10 @@ export class SheetUtils {
 
   private static getHoldingsSheet() {
     return this.document.sheetsByTitle[this.holdingsSheetTitle];
+  }
+
+  private static getAllocationSheet() {
+    return this.document.sheetsByTitle[this.allocationSheetTitle];
   }
 
   private static clearHoldings() {

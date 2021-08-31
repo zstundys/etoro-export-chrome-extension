@@ -119,6 +119,21 @@ export class PageUtils {
     return [[[]], ""];
   }
 
+  static getAvailableToSpend(): number {
+    const footerEl = document.querySelector<HTMLElement>("et-account-balance");
+
+    if (footerEl) {
+      const availableToSpend = PageUtils.getContentForChild(
+        footerEl,
+        '[automation-id="account-balance-availible-unit-value"]'
+      );
+
+      return parseFloat(availableToSpend);
+    } else {
+      return 0;
+    }
+  }
+
   static getContentForChild(
     parent: HTMLElement,
     childSelector: string

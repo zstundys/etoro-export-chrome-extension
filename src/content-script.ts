@@ -31,13 +31,15 @@ chrome.runtime.onMessage.addListener((message: ExportMessage) => {
       console.log(message.action, exported);
       FileUtils.downloadMatrixAsCsv(exported, `${fileName}-stocks`);
     },
-    [ExportAction.SyncStocks]: () => {
+    [ExportAction.SyncStocks]: async () => {
       const [dataset] = PageUtils.getDatasetAndFileNameForPage();
       const stocksDataset = DataUtils.excludeCryptoRows(dataset, 0);
       const exported = DataUtils.mapStockSymbolsRows(stocksDataset, 0);
+      const availableToSpend = PageUtils.getAvailableToSpend();
 
       console.log(message.action, exported);
-      SheetUtils.syncHoldings(exported);
+      await SheetUtils.syncHoldings(exported);
+      await SheetUtils.syncAvailableToSpend(availableToSpend);
     },
     [ExportAction.ExportCrypto]: () => {
       const [dataset, fileName] = PageUtils.getDatasetAndFileNameForPage();
