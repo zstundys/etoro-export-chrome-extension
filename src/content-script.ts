@@ -3,6 +3,7 @@ import { PageUtils } from "./utils/page.utils";
 import { FileUtils } from "./utils/file.utils";
 import { SheetUtils } from "./utils/sheet.utils";
 import { Log } from "./utils/log.utils";
+import { ElementNotFoundError } from "./utils/error.utils";
 
 enum ExportAction {
   ExportAll = "export-all",
@@ -54,5 +55,5 @@ chrome.runtime.onMessage.addListener((message: ExportMessage) => {
     },
   };
 
-  actionMap[message.action]();
+  ElementNotFoundError.handle(actionMap[message.action]);
 });

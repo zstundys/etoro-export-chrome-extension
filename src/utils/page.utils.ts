@@ -3,6 +3,7 @@ import {
   RowData,
   TradeTuple,
 } from "../typings/csv-data";
+import { ElementNotFoundError } from "./error.utils";
 
 import { DataUtils } from "./data.utils";
 
@@ -44,33 +45,6 @@ export class PageUtils {
     return [columns, ...exportedData];
   }
 
-  static aggregateData(duplicateData: TradeTuple[]): TradeTuple[] {
-    type HoldingsMap = {
-      [symbol: string]: TradeTuple;
-    };
-
-    const summedRowData = duplicateData.reduce<HoldingsMap>(
-      (acc, [symbol, shares, invested]) => {
-        if (symbol in acc) {
-          const [, accShares, accInvested] = acc[symbol];
-
-          return {
-            ...acc,
-            [symbol]: [symbol, accShares + shares, accInvested + invested],
-          };
-        } else {
-          return {
-            ...acc,
-            [symbol]: [symbol, shares, invested],
-          };
-        }
-      },
-      {}
-    );
-
-    return Object.values(summedRowData);
-  }
-
   static getTableForPortfolioPage(): ExportedHoldingCsvData {
     const dom = {
       SYMBOL:
@@ -99,6 +73,33 @@ export class PageUtils {
     const columns = Object.keys(dom).slice(0, rowData[0].length);
 
     return [columns, ...rowData];
+  }
+
+  static aggregateData(duplicateData: TradeTuple[]): TradeTuple[] {
+    type HoldingsMap = {
+      [symbol: string]: TradeTuple;
+    };
+
+    const summedRowData = duplicateData.reduce<HoldingsMap>(
+      (acc, [symbol, shares, invested]) => {
+        if (symbol in acc) {
+          const [, accShares, accInvested] = acc[symbol];
+
+          return {
+            ...acc,
+            [symbol]: [symbol, accShares + shares, accInvested + invested],
+          };
+        } else {
+          return {
+            ...acc,
+            [symbol]: [symbol, shares, invested],
+          };
+        }
+      },
+      {}
+    );
+
+    return Object.values(summedRowData);
   }
 
   static checkPage(): { isPortfolio: boolean; isTrades: boolean } {
@@ -143,8 +144,13 @@ export class PageUtils {
     parent: HTMLElement,
     childSelector: string
   ): string {
-    const childElementText =
-      parent.querySelector(childSelector)?.textContent ?? "";
+    const childElement = parent.querySelector(childSelector);
+
+    if (!childElement) {
+      throw new ElementNotFoundError(childSelector);
+    }
+
+    const childElementText = childElement.textContent ?? "";
     const cleanText = childElementText.trim().replace(/\$|,/gi, "");
 
     return cleanText;
