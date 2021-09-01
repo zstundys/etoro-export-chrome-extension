@@ -1,4 +1,4 @@
-import { ExportedHoldingCsvData } from "../types";
+import { ExportedHoldingCsvData } from "../typings/csv-data";
 
 const cryptoMap = new Map<string, string>();
 

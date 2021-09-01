@@ -1,4 +1,9 @@
-import { ExportedHoldingCsvData, RowData, TradeTuple } from "../types";
+import {
+  ExportedHoldingCsvData,
+  RowData,
+  TradeTuple,
+} from "../typings/csv-data";
+
 import { DataUtils } from "./data.utils";
 
 export class PageUtils {

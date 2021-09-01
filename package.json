@@ -3,8 +3,8 @@
   "version": "0.0.1",
   "description": "An extension that provides a capability to export portfolio data from eToro trading platform",
   "scripts": {
-    "start": "parcel watch src/content-script.ts -d ./extension",
-    "build": "parcel build src/content-script.ts -d ./extension"
+    "start": "parcel watch src/content-script.ts src/background.ts -d ./extension",
+    "build": "parcel build src/content-script.ts src/background.ts -d ./extension"
   },
   "repository": {
     "type": "git",

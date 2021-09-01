@@ -1,7 +1,7 @@
 import { GoogleSpreadsheet } from "google-spreadsheet";
 
 import secrets from "../../secrets.json";
-import { ExportedHoldingCsvData } from "../types";
+import { ExportedHoldingCsvData } from "../typings/csv-data";
 
 export class SheetUtils {
   private static readonly document = new GoogleSpreadsheet(
