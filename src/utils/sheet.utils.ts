@@ -2,10 +2,14 @@ import { GoogleSpreadsheet } from "google-spreadsheet";
 
 import secrets from "../../secrets.json";
 import { ExportedHoldingCsvData } from "../typings/csv-data";
+import { Log } from "./log.utils";
 
 export class SheetUtils {
-  private static readonly document = new GoogleSpreadsheet(
+  private static readonly savingsDocument = new GoogleSpreadsheet(
     secrets.holdings_sheet_id
+  );
+  private static readonly patreonDocument = new GoogleSpreadsheet(
+    secrets.patreon_sheet_id
   );
 
   // Holdings sheet
@@ -16,14 +20,19 @@ export class SheetUtils {
   // Allocation sheet
   private static readonly allocationSheetTitle = "Allocation";
   private static readonly availableToSpendCell = "B1";
+  // Patreon sheet
+  private static readonly patreonHoldingsSheetTitle = "Enter-Data-Here";
+  private static readonly patreonHoldingsRange = "A4:C104";
+  private static readonly patreonHoldingsRangeHeight = 100;
+  private static readonly patreonHoldingsRangeRow = 4;
   // Secrets
   private static readonly clientEmail = secrets.client_email;
   private static readonly privateKey = secrets.private_key;
 
   static async syncHoldings(dataset: ExportedHoldingCsvData) {
-    console.log("Syncing holdings to Google Sheets...");
+    Log.info("Syncing holdings to Google Sheets...");
 
-    await this.initialize();
+    await this.initialize(this.savingsDocument);
     const sheet = SheetUtils.getHoldingsSheet();
     await sheet.loadCells(this.holdingsRange);
 
@@ -56,13 +65,38 @@ export class SheetUtils {
 
     await sheet.saveUpdatedCells();
 
-    console.log("Syncing holdings to Google Sheets... Done");
+    Log.info("Syncing holdings to Google Sheets... Done");
+  }
+
+  static async syncPatreonHoldings(dataset: ExportedHoldingCsvData) {
+    Log.info("Syncing patreon holdings to Google Sheets...");
+
+    await this.initialize(this.patreonDocument);
+    const sheet = SheetUtils.getPatreonHoldingsSheet();
+    await sheet.loadCells(this.patreonHoldingsRange);
+
+    SheetUtils.clearPatreonHoldings();
+    const [, ...rowData] = dataset;
+
+    rowData.forEach((row, i) => {
+      const r = this.patreonHoldingsRangeRow + i;
+      const [symbol, shares, _invested, _marketValue, avgPrice] = row;
+
+      const rowCells = this.getPatreonHoldings(r);
+      rowCells.A.value = symbol;
+      rowCells.B.value = parseFloat(shares);
+      rowCells.C.value = parseFloat(avgPrice);
+    });
+
+    await sheet.saveUpdatedCells();
+
+    Log.info("Syncing patreon holdings to Google Sheets... Done");
   }
 
   static async syncAvailableToSpend(availableToSpend: number) {
-    console.log(`Updating available to spend cell (${availableToSpend}$)...`);
+    Log.info(`Updating available to spend cell (${availableToSpend}$)...`);
 
-    await this.initialize();
+    await this.initialize(this.savingsDocument);
     const sheet = this.getAllocationSheet();
     await sheet.loadCells(this.availableToSpendCell);
 
@@ -71,26 +105,30 @@ export class SheetUtils {
 
     await sheet.saveUpdatedCells();
 
-    console.log(
+    Log.info(
       `Updating available to spend cell (${availableToSpend}$)... Done `
     );
   }
 
-  private static async initialize() {
-    await this.document.useServiceAccountAuth({
+  private static async initialize(document: GoogleSpreadsheet) {
+    await document.useServiceAccountAuth({
       client_email: this.clientEmail,
       private_key: this.privateKey,
     });
 
-    await this.document.loadInfo();
+    await document.loadInfo();
   }
 
   private static getHoldingsSheet() {
-    return this.document.sheetsByTitle[this.holdingsSheetTitle];
+    return this.savingsDocument.sheetsByTitle[this.holdingsSheetTitle];
   }
 
   private static getAllocationSheet() {
-    return this.document.sheetsByTitle[this.allocationSheetTitle];
+    return this.savingsDocument.sheetsByTitle[this.allocationSheetTitle];
+  }
+
+  private static getPatreonHoldingsSheet() {
+    return this.patreonDocument.sheetsByTitle[this.patreonHoldingsSheetTitle];
   }
 
   private static clearHoldings() {
@@ -98,6 +136,18 @@ export class SheetUtils {
       const row = this.holdingsRangeRow + i;
 
       const rowCells = this.getHoldings(row);
+
+      Object.values(rowCells).forEach((cell) => {
+        cell.value = "";
+      });
+    }
+  }
+
+  private static clearPatreonHoldings() {
+    for (let i = 0; i <= this.patreonHoldingsRangeHeight; i++) {
+      const row = this.patreonHoldingsRangeRow + i;
+
+      const rowCells = this.getPatreonHoldings(row);
 
       Object.values(rowCells).forEach((cell) => {
         cell.value = "";
@@ -143,6 +193,19 @@ export class SheetUtils {
       P: sheet.getCellByA1(`P${rowNumber}`),
       /** Sector `=VLOOKUP($A8,Ref!$B$2:$C,2, false)` */
       Q: sheet.getCellByA1(`Q${rowNumber}`),
+    };
+  }
+
+  private static getPatreonHoldings(rowNumber: number) {
+    const sheet = this.getPatreonHoldingsSheet();
+
+    return {
+      /** Ticker */
+      A: sheet.getCellByA1(`A${rowNumber}`),
+      /** Shares */
+      B: sheet.getCellByA1(`B${rowNumber}`),
+      /** Avg. Price */
+      C: sheet.getCellByA1(`C${rowNumber}`),
     };
   }
 }

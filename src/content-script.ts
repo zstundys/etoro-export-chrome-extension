@@ -2,6 +2,7 @@ import { DataUtils } from "./utils/data.utils";
 import { PageUtils } from "./utils/page.utils";
 import { FileUtils } from "./utils/file.utils";
 import { SheetUtils } from "./utils/sheet.utils";
+import { Log } from "./utils/log.utils";
 
 enum ExportAction {
   ExportAll = "export-all",
@@ -20,7 +21,7 @@ chrome.runtime.onMessage.addListener((message: ExportMessage) => {
       const [dataset, fileName] = PageUtils.getDatasetAndFileNameForPage();
       const exported = DataUtils.mapCryptoSymbolsRows(dataset, 0);
 
-      console.log(message.action, exported);
+      Log.info("Exporting all...", exported);
       FileUtils.downloadMatrixAsCsv(exported, `${fileName}-all`);
     },
     [ExportAction.ExportStocks]: () => {
@@ -28,7 +29,7 @@ chrome.runtime.onMessage.addListener((message: ExportMessage) => {
       const stocksDataset = DataUtils.excludeCryptoRows(dataset, 0);
       const exported = DataUtils.mapStockSymbolsRows(stocksDataset, 0);
 
-      console.log(message.action, exported);
+      Log.info("Exporting stocks...", exported);
       FileUtils.downloadMatrixAsCsv(exported, `${fileName}-stocks`);
     },
     [ExportAction.SyncStocks]: async () => {
@@ -37,16 +38,18 @@ chrome.runtime.onMessage.addListener((message: ExportMessage) => {
       const exported = DataUtils.mapStockSymbolsRows(stocksDataset, 0);
       const availableToSpend = PageUtils.getAvailableToSpend();
 
-      console.log(message.action, exported);
+      Log.info("Synchronizing stocks...", exported);
       await SheetUtils.syncHoldings(exported);
       await SheetUtils.syncAvailableToSpend(availableToSpend);
+      await SheetUtils.syncPatreonHoldings(exported);
+      Log.info("Synchronizing stocks... Done");
     },
     [ExportAction.ExportCrypto]: () => {
       const [dataset, fileName] = PageUtils.getDatasetAndFileNameForPage();
       const exported = DataUtils.keepOnlyCryptoRows(dataset, 0);
       const mapped = DataUtils.mapCryptoSymbolsRows(exported, 0);
 
-      console.log(message.action, mapped);
+      Log.info("Exporting crypto...", exported);
       FileUtils.downloadMatrixAsCsv(mapped, `${fileName}-crypto`);
     },
   };

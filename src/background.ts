@@ -1,13 +1,13 @@
 import { ExportAction } from "./typings/export-action";
 
-const titleMap: Record<ExportAction, string> = {
+const actionTitleMap: Record<ExportAction, string> = {
   [ExportAction.ExportAll]: "Export all",
   [ExportAction.ExportStocks]: "Export stocks",
   [ExportAction.ExportCrypto]: "Export crypto",
   [ExportAction.SyncStocks]: "Sync stocks",
 } as const;
 
-const actions = Object.entries(titleMap) as [ExportAction, string][];
+const actions = Object.entries(actionTitleMap) as [ExportAction, string][];
 
 actions.forEach(([action, title]) => {
   chrome.contextMenus.create({
