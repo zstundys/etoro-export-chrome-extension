@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "eToro CSV Portfolio Exporter",
   "version": "1.0",
-  "description": "Makes your eToro holdings (trades/portfolio) available to export to csv. Just right-click on your portfolio holdings and click \"Export to CSV\"",
+  "description": "Makes your eToro holdings (trades/portfolio) available to export to csv.",
   "permissions": ["contextMenus"],
   "background": {
     "scripts": ["background.js"],
