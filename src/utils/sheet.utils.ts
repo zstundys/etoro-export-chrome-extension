@@ -1,15 +1,15 @@
 import { GoogleSpreadsheet } from "google-spreadsheet";
+import { environment } from "../environment";
 
-import secrets from "../../secrets.json";
 import { ExportedHoldingCsvData } from "../typings/csv-data";
 import { Log } from "./log.utils";
 
 export class SheetUtils {
   private static readonly savingsDocument = new GoogleSpreadsheet(
-    secrets.holdings_sheet_id
+    environment.sheetIdForHoldings
   );
   private static readonly patreonDocument = new GoogleSpreadsheet(
-    secrets.patreon_sheet_id
+    environment.sheetIdForPatreon
   );
 
   // Holdings sheet
@@ -26,8 +26,8 @@ export class SheetUtils {
   private static readonly patreonHoldingsRangeHeight = 100;
   private static readonly patreonHoldingsRangeRow = 4;
   // Secrets
-  private static readonly clientEmail = secrets.client_email;
-  private static readonly privateKey = secrets.private_key;
+  private static readonly clientEmail = environment.apiClientEmail;
+  private static readonly privateKey = environment.apiPrivateKey;
 
   static async syncHoldings(dataset: ExportedHoldingCsvData) {
     Log.info("Syncing holdings to Google Sheets...");

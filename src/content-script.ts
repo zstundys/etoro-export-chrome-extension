@@ -20,10 +20,10 @@ chrome.runtime.onMessage.addListener((message: ExportMessage) => {
   const actionMap: Record<ExportAction, () => void> = {
     [ExportAction.ExportAll]: () => {
       const [dataset, fileName] = PageUtils.getDatasetAndFileNameForPage();
-      const exported = DataUtils.mapCryptoSymbolsRows(dataset, 0);
+      const exported = DataUtils.mapStockSymbolsRows(dataset, 0);
 
-      Log.info("Exporting all...", exported);
-      FileUtils.downloadMatrixAsCsv(exported, `${fileName}-all`);
+      Log.info("Exporting...", exported);
+      FileUtils.downloadMatrixAsCsv(exported, `${fileName}`);
     },
     [ExportAction.ExportStocks]: () => {
       const [dataset, fileName] = PageUtils.getDatasetAndFileNameForPage();

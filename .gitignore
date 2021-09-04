@@ -4,6 +4,7 @@ node_modules
 
 # Secrets
 secrets.json
+secrets.real.json
 
 # Compiled output
 extension/background.js
