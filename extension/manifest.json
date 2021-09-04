@@ -1,5 +1,5 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "eToro CSV Portfolio Exporter",
   "version": "1.0",
   "description": "Makes your eToro holdings (trades/portfolio) available to export to csv.",
