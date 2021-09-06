@@ -52,7 +52,7 @@ export class PageUtils {
       SHARES:
         '[data-etoro-automation-id="portfolio-overview-table-body-cell-units-value"]',
       INVESTED:
-        '[data-etoro-automation-id="portfolio-overview-table-body-cell-total-amount"]',
+        '[data-etoro-automation-id="portfolio-overview-table-body-cell-invested-value"]',
       MARKET_VALUE:
         '[data-etoro-automation-id="portfolio-overview-table-body-cell-equity"]',
       AVERAGE_PRICE:

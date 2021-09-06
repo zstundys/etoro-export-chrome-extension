@@ -7,7 +7,7 @@ export class ElementNotFoundError implements Error {
     const elementSelectorToNameMap: Record<string, string> = {
       '[data-etoro-automation-id="portfolio-overview-table-body-cell-market-name"]': `Stock symbol was not found`,
       '[data-etoro-automation-id="portfolio-overview-table-body-cell-units-value"]': `"Units" column was not found`,
-      '[data-etoro-automation-id="portfolio-overview-table-body-cell-total-amount"]': `"Invested" column was not found`,
+      '[data-etoro-automation-id="portfolio-overview-table-body-cell-invested-value"]': `"Invested" column was not found`,
       '[data-etoro-automation-id="portfolio-overview-table-body-cell-equity"]': `"Value" column was not found`,
       '[data-etoro-automation-id="portfolio-overview-table-body-cell-avg-open-rate"]': `"Avg. open" column was not found`,
       '[data-etoro-automation-id="portfolio-manual-trades-table-body-market-name"]': `Stock symbol was not found`,
