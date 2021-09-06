@@ -21,6 +21,7 @@ actions.forEach((action) => {
   const title = actionTitleMap[action];
 
   chrome.contextMenus.create({
+    id: action,
     title,
     documentUrlPatterns:
       action === ExportAction.SyncStocks
@@ -30,10 +31,11 @@ actions.forEach((action) => {
             "https://*.etoro.com/portfolio/manual-trades",
           ],
     contexts: ["page", "link"],
-    onclick: (_, tab) => {
-      if (tab.id) {
-        chrome.tabs.sendMessage(tab.id, { action });
-      }
-    },
   });
+});
+
+chrome.contextMenus.onClicked.addListener((info, tab) => {
+  if (tab?.id) {
+    chrome.tabs.sendMessage(tab.id, { action: info.menuItemId });
+  }
 });

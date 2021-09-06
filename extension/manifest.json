@@ -5,8 +5,7 @@
   "description": "Makes your eToro holdings (trades/portfolio) available to export to csv.",
   "permissions": ["contextMenus"],
   "background": {
-    "scripts": ["background.js"],
-    "persistent": true
+    "service_worker": "background.js"
   },
   "content_scripts": [
     {
