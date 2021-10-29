@@ -1,9 +1,9 @@
 import { DataUtils } from "./utils/data.utils";
-import { PageUtils } from "./utils/page.utils";
-import { FileUtils } from "./utils/file.utils";
-import { SheetUtils } from "./utils/sheet.utils";
-import { Log } from "./utils/log.utils";
 import { ElementNotFoundError } from "./utils/error.utils";
+import { FileUtils } from "./utils/file.utils";
+import { Log } from "./utils/log.utils";
+import { PageUtils } from "./utils/page.utils";
+import { SheetUtils } from "./utils/sheet.utils";
 
 enum ExportAction {
   ExportAll = "export-all",
@@ -44,6 +44,7 @@ chrome.runtime.onMessage.addListener((message: ExportMessage) => {
       await SheetUtils.syncAvailableToSpend(availableToSpend);
       await SheetUtils.syncPatreonHoldings(exported);
       Log.info("Synchronizing stocks... Done");
+      alert("Synchronizing stocks... Done");
     },
     [ExportAction.ExportCrypto]: () => {
       const [dataset, fileName] = PageUtils.getDatasetAndFileNameForPage();
