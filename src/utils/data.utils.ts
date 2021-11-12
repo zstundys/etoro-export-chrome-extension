@@ -1,15 +1,5 @@
 import { ExportedHoldingCsvData } from "../typings/csv-data";
-
-const cryptoMap = new Map<string, string>();
-
-cryptoMap.set("BTC", "BTCUSDT");
-cryptoMap.set("ETH", "ETHUSDT");
-cryptoMap.set("ETHEREUM", "ETHUSDT");
-cryptoMap.set("ADA", "ADAUSDT");
-
-const stockMap = new Map<string, string>();
-
-stockMap.set("DASH.US", "DASH");
+import { cryptoMap, stockMap } from "./symbol-maps";
 
 export class DataUtils {
   /** Filters crypto rows out from given dataset */
