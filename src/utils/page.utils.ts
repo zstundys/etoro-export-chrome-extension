@@ -10,16 +10,11 @@ import { DataUtils } from "./data.utils";
 export class PageUtils {
   static getTableForTradesPage(): ExportedHoldingCsvData {
     const dom = {
-      SYMBOL:
-        '[data-etoro-automation-id="portfolio-manual-trades-table-body-market-name"]',
-      SHARES:
-        '[data-etoro-automation-id="portfolio-overview-table-body-cell-units-value"]',
-      INVESTED:
-        '[data-etoro-automation-id="portfolio-manual-trades-table-body-invested-value"]',
-      price:
-        '[data-etoro-automation-id="portfolio-manual-trades-table-body-open-rate"]',
-
-      root: '[data-etoro-automation-id="portfolio-manual-trades-table"]',
+      SYMBOL: '[automation-id="portfolio-position-list-row-symbol-full"]',
+      SHARES: '[automation-id="portfolio-position-list-row-units"]',
+      INVESTED: '[automation-id="portfolio-position-list-row-amount"]',
+      price: '[automation-id="portfolio-position-list-row-open-rate"]',
+      root: '[automation-id="portfolioOverviewmanualTrades"]',
     } as const;
 
     const rowData: TradeTuple[] = PageUtils.getRowElements(dom.root)
@@ -48,17 +43,16 @@ export class PageUtils {
   static getTableForPortfolioPage(): ExportedHoldingCsvData {
     const dom = {
       SYMBOL:
-        '[data-etoro-automation-id="portfolio-overview-table-body-cell-market-name"]',
+        '[automation-id="portfolio-overview-table-body-cell-market-name"]',
       SHARES:
-        '[data-etoro-automation-id="portfolio-overview-table-body-cell-units-value"]',
+        '[automation-id="portfolio-overview-table-body-cell-units-value"]',
       INVESTED:
-        '[data-etoro-automation-id="portfolio-overview-table-body-cell-invested-value"]',
+        '[automation-id="portfolio-overview-table-body-cell-invested-value"]',
       MARKET_VALUE:
-        '[data-etoro-automation-id="portfolio-overview-table-body-cell-equity"]',
+        '[automation-id="portfolio-overview-table-body-cell-equity"]',
       AVERAGE_PRICE:
-        '[data-etoro-automation-id="portfolio-overview-table-body-cell-avg-open-rate"]',
-
-      root: '[data-etoro-automation-id="portfolio-overview-table-body"]',
+        '[automation-id="portfolio-overview-table-body-cell-avg-open-rate"]',
+      root: '[automation-id="portfolio-overview-table"]',
     };
 
     const rowData = PageUtils.getRowElements(dom.root).map((el) => [
@@ -103,8 +97,12 @@ export class PageUtils {
   }
 
   static checkPage(): { isPortfolio: boolean; isTrades: boolean } {
-    const isPortfolio = window.location.pathname.endsWith("portfolio");
-    const isTrades = window.location.pathname.endsWith("manual-trades");
+    const isTrades = !!document.querySelector(
+      '[automation-id="portfolioOverviewmanualTrades"]'
+    );
+    const isPortfolio = !!document.querySelector(
+      '[automation-id="portfolio-overview-table"]'
+    );
 
     return { isPortfolio, isTrades };
   }
@@ -161,7 +159,9 @@ export class PageUtils {
     return Array.from(
       document
         .querySelector(tableSelector)
-        ?.querySelectorAll(".ui-table-row-container") ?? []
+        ?.querySelectorAll(
+          '[automation-id="watchlist-grid-instruments-list"]'
+        ) ?? []
     );
   }
 

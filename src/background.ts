@@ -23,13 +23,7 @@ actions.forEach((action) => {
   chrome.contextMenus.create({
     id: action,
     title,
-    documentUrlPatterns:
-      action === ExportAction.SyncStocks
-        ? ["https://*.etoro.com/portfolio"]
-        : [
-            "https://*.etoro.com/portfolio",
-            "https://*.etoro.com/portfolio/manual-trades",
-          ],
+    documentUrlPatterns: ["https://*.etoro.com/portfolio/overview"],
     contexts: ["page", "link"],
   });
 });
