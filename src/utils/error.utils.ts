@@ -31,3 +31,7 @@ export class ElementNotFoundError implements Error {
     }
   }
 }
+
+export function raise(message: string): never {
+  throw new Error(message);
+}

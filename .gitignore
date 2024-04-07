@@ -1,6 +1,6 @@
 node_modules
 .env
-.cache
+.parcel-cache
 
 # Secrets
 secrets.json
@@ -9,5 +9,7 @@ secrets.real.json
 # Compiled output
 extension/background.js
 extension/background.js.map
+extension/build.*.js
+extension/build.*.js.map
 extension/content-script.js
 extension/content-script.js.map

@@ -109,7 +109,7 @@ export class PageUtils {
 
   static getDatasetAndFileNameForPage(): [
     dataset: ExportedHoldingCsvData,
-    fileName: string
+    fileName: string,
   ] {
     const { isPortfolio, isTrades } = PageUtils.checkPage();
 

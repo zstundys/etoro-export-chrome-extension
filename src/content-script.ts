@@ -5,7 +5,7 @@ import { Log } from "./utils/log.utils";
 import { PageUtils } from "./utils/page.utils";
 import { SheetUtils } from "./utils/sheet.utils";
 
-enum ExportAction {
+const enum ExportAction {
   ExportAll = "export-all",
   ExportStocks = "export-stocks",
   SyncStocks = "sync-stocks",

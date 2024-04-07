@@ -10,7 +10,7 @@ const actions: ExportAction[] = environment.isPrivate
     ]
   : [ExportAction.ExportAll];
 
-actions.forEach((action) => {
+for (const action of actions) {
   const actionTitleMap: Record<ExportAction, string> = {
     [ExportAction.ExportAll]: "Export to CSV",
     [ExportAction.ExportStocks]: "Export stocks",
@@ -26,7 +26,7 @@ actions.forEach((action) => {
     documentUrlPatterns: ["https://*.etoro.com/portfolio/overview"],
     contexts: ["page", "link"],
   });
-});
+}
 
 chrome.contextMenus.onClicked.addListener((info, tab) => {
   if (tab?.id) {

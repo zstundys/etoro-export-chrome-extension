@@ -1,15 +1,25 @@
 import { GoogleSpreadsheet } from "google-spreadsheet";
 import { environment } from "../environment";
+import { JWT } from "google-auth-library";
 
 import { ExportedHoldingCsvData } from "../typings/csv-data";
 import { Log } from "./log.utils";
+import { raise } from "./error.utils";
 
 export class SheetUtils {
+  private static readonly auth = new JWT({
+    email: environment.apiClientEmail,
+    key: environment.apiPrivateKey,
+    scopes: ["https://www.googleapis.com/auth/spreadsheets"],
+  });
+
   private static readonly savingsDocument = new GoogleSpreadsheet(
-    environment.sheetIdForHoldings
+    environment.sheetIdForHoldings ?? raise("Sheet ID for holdings is missing"),
+    this.auth
   );
   private static readonly patreonDocument = new GoogleSpreadsheet(
-    environment.sheetIdForPatreon
+    environment.sheetIdForPatreon ?? raise("Sheet ID for patreon is missing"),
+    this.auth
   );
 
   // Holdings sheet
@@ -25,9 +35,6 @@ export class SheetUtils {
   private static readonly patreonHoldingsRange = "A4:C104";
   private static readonly patreonHoldingsRangeHeight = 100;
   private static readonly patreonHoldingsRangeRow = 4;
-  // Secrets
-  private static readonly clientEmail = environment.apiClientEmail;
-  private static readonly privateKey = environment.apiPrivateKey;
 
   static async syncHoldings(dataset: ExportedHoldingCsvData) {
     Log.info("Syncing holdings to Google Sheets...");
@@ -39,7 +46,7 @@ export class SheetUtils {
     SheetUtils.clearHoldings();
     const [, ...rowData] = dataset;
 
-    rowData.forEach((row, i) => {
+    for (const [i, row] of rowData.entries()) {
       const r = this.holdingsRangeRow + i;
       const [symbol, shares, invested] = row;
 
@@ -61,7 +68,7 @@ export class SheetUtils {
       rowCells.O.formula = `=VLOOKUP($A${r},StockRef,4, false)`;
       rowCells.P.formula = `=D${r}*O${r}`;
       rowCells.Q.formula = `=VLOOKUP($A${r},Ref!$B$2:$C,2, false)`;
-    });
+    }
 
     await sheet.saveUpdatedCells();
 
@@ -111,11 +118,6 @@ export class SheetUtils {
   }
 
   private static async initialize(document: GoogleSpreadsheet) {
-    await document.useServiceAccountAuth({
-      client_email: this.clientEmail,
-      private_key: this.privateKey,
-    });
-
     await document.loadInfo();
   }
 
@@ -149,9 +151,9 @@ export class SheetUtils {
 
       const rowCells = this.getPatreonHoldings(row);
 
-      Object.values(rowCells).forEach((cell) => {
+      for (const cell of Object.values(rowCells)) {
         cell.value = "";
-      });
+      }
     }
   }
 
