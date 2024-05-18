@@ -13,3 +13,4 @@ extension/build.*.js
 extension/build.*.js.map
 extension/content-script.js
 extension/content-script.js.map
+desktop.ini
